@@ -8,13 +8,15 @@ type MediaContext = {
       endCursor: string,
       loading: boolean,
       loadLocalAssets: (assetId:string) => void,
+      getAssetById: (id:string) => MediaLibrary.Asset | undefined,
 }
 
 const MediaContext = createContext<MediaContext>({
       localAssets: [],
       endCursor: '',
       loading: false,
-      loadLocalAssets: () => {}
+      loadLocalAssets: () => {},
+      getAssetById: () => undefined,
 })
 
 export const MediaContextProvider = ({ children}: PropsWithChildren ) => {
@@ -55,8 +57,12 @@ export const MediaContextProvider = ({ children}: PropsWithChildren ) => {
         setEndCursor(assetPage.endCursor);   
         setLoading(false)
       };
+
+      const getAssetById = (id:string) => {
+        return localAssets.find((asset) => asset.id === id)
+      }
       return (
-            <MediaContext.Provider value={{localAssets, endCursor, loadLocalAssets, loading}}>{children}</MediaContext.Provider>
+            <MediaContext.Provider value={{localAssets, endCursor, loadLocalAssets, loading, getAssetById}}>{children}</MediaContext.Provider>
       )
 }
 
