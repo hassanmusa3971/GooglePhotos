@@ -6,7 +6,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 
 const AssetPage = () => {
   const { id } = useGlobalSearchParams<{id:string}>();
-  const { getAssetById } = useMedia();
+  const { getAssetById, syncToCloud } = useMedia();
   const asset = getAssetById(id);
 
   if (!asset) {
@@ -15,7 +15,7 @@ const AssetPage = () => {
   return (
     <>
     <Stack.Screen options={{ title: 'Photo', headerRight: () => {
-      return (<AntDesign name="cloudupload" size={24} color="black" />)
+      return (<AntDesign onPress={() => syncToCloud(asset)} name="cloudupload" size={24} color="black" />)
     }}} />
       <Image
         source={{ uri: asset.uri }}
