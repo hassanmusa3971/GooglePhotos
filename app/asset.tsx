@@ -9,18 +9,26 @@ const AssetPage = () => {
   const { id } = useGlobalSearchParams<{id:string}>();
   const { getAssetById, syncToCloud } = useMedia();
   const asset = getAssetById(id);
+  console.log("Asset Path: ", asset)
 
   if (!asset) {
     return <Text>No Asset Found</Text>;
   }
-  const url = getImagekitUrlFromPath('23338271-3b23-49fe-9ea0-2f86052d3075/ELIZBETH%20FLIGHT-2.jpg',[{ width: 200, height: 200}])
+
+  let uri;
+  if(asset.isLocalAsset){
+    uri = asset.uri
+  }else{
+    uri = getImagekitUrlFromPath(asset?.path,[{ width: 200, height: 200}])
+  }
+  
   return (
     <>
     <Stack.Screen options={{ title: 'Photo', headerRight: () => {
       return (<AntDesign onPress={() => syncToCloud(asset)} name="cloudupload" size={24} color="black" />)
     }}} />
       <Image
-        source={{ uri: url }}
+        source={{ uri }}
         style={{ width: '100%', height: '100%' }}
         contentFit="contain"
       />
