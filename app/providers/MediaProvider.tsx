@@ -72,12 +72,22 @@ export const MediaContextProvider = ({ children }: PropsWithChildren) => {
     if (!info.localUri || !user?.id) return;
     const base64String = await FileSystem.readAsStringAsync(info.localUri, { encoding: 'base64' });
     const base64ArrayBuffer = decode(base64String);
-    const { data, error } = await supabase.storage
+    const { data:storeFile, error:uploadError } = await supabase.storage
       .from('assets')
       .upload(`${user?.id}/${asset.filename}`, base64ArrayBuffer, {
         contentType: mime.getType(asset.filename) ?? 'image/jpeg',
         upsert: true,
       });
+
+    const{ data, error } = await supabase.from('assets').upsert({
+      path: storeFile?.path,
+      user_id: user?.id,
+      object_id: storeFile?.id,
+      mediaType: asset?.mediaType,
+      asset_id: asset?.id,
+    }).select('*').single()
+    console.log(data)
+    console.log(error)
   };
   return (
     <MediaContext.Provider
